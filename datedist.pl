@@ -182,14 +182,14 @@ if ($move_corresponding_xmp) {
     $mcf_exts{'xmp'}++;
 }
 if ($move_corresponding_jpg) {
-    $mcf_exts{'jpg'}++
-    $mcf_exts{'jpeg'}++
+    $mcf_exts{'jpg'}++;
+    $mcf_exts{'jpeg'}++;
 }
 if ($move_corresponding_png) {
-    $mcf_exts{'png'}++ 
+    $mcf_exts{'png'}++ ;
 }
 if ($move_corresponding_tif) {
-    $mcf_exts{'tiff'}++ 
+    $mcf_exts{'tiff'}++ ;
 }
 # }}}
 # }}}
