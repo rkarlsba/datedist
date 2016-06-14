@@ -4,7 +4,7 @@
 # Note to vim newbies: This file uses folds. To open all folds, type zR in
 # command mode.
 
-# datedist.pl v0.1.4 docs {{{
+# datedist.pl v0.2.0 docs {{{
 #
 # datedist.pl is a file distribution script written by Roy Sigurd Karlsbakk
 # <roy@karlsbakk.net>. I wrote it to distribute a few thousand files in a
@@ -36,6 +36,12 @@
 # 2016-06-13:
 #  - Changed to make --exif default
 #
+# 2016-06-14:
+#  - Changed old --move-corresponding-(something) to --mcf=ext,ext2 etc.
+#    Compatibility with old syntax is retained.
+#  - Version changed to 0.9.9
+#  - More testing to be done
+#
 # License: AGPL v3.0. See http://www.gnu.org/licenses/agpl-3.0.html for details.
 #
 # Roy Sigurd Karlsbakk <roy@karlsbakk.net>
@@ -66,11 +72,15 @@ my $help = 0;
 my $verbose = 0;
 my $exif = 1;
 my $noexif = 0;
+my $mcf = undef;
 my $move_corresponding_xmp = 0;
 my $move_corresponding_jpg = 0;
 my $move_corresponding_png = 0;
 my $move_corresponding_tif = 0;
 my $move_corresponding_files = 0;
+
+# stuff
+my %mcf_exts;
 
 my $force = 0;
 my $print_version = 0;
@@ -129,7 +139,6 @@ sub version
 # }}}
 
 # Parse options {{{
-# ta med her også :) okey
 Getopt::Long::Configure('bundling');
 GetOptions(
 	"dest-dir=s" => \$dest_dir,
@@ -139,6 +148,7 @@ GetOptions(
 	"minute" => \$minute_dir,
 	"norun" => \$norun,
 	"exif" => \$exif,
+	"mcf=s" => \$mcf,
 	"move-corresponding-xmp" => \$move_corresponding_xmp,
 	"move-corresponding-jpg" => \$move_corresponding_jpg,
 	"move-corresponding-png" => \$move_corresponding_png,
@@ -155,9 +165,35 @@ $hour_dir = 1 if ($minute_dir);
 &help("Incompatible options!") if ($no_day_dir and $hour_dir);
 &help if ($help);
 &version if ($print_version);
+
+# Move corresponding files - new way {{{
+# mcf is "move corresponding files" the new way
+if (defined($mcf)) {
+    chomp($mcf);
+    foreach my $ext (split $mcf,',') {
+        $mcf_exts{$ext}++;
+    }
+}
+# }}}
+# Backward compatibility {{{
 $move_corresponding_xmp = $move_corresponding_jpg = $move_corresponding_png = $move_corresponding_tif = 1 if ($move_corresponding_files);
 
+if ($move_corresponding_xmp) {
+    $mcf_exts{'xmp'}++;
+}
+if ($move_corresponding_jpg) {
+    $mcf_exts{'jpg'}++
+    $mcf_exts{'jpeg'}++
+}
+if ($move_corresponding_png) {
+    $mcf_exts{'png'}++ 
+}
+if ($move_corresponding_tif) {
+    $mcf_exts{'tiff'}++ 
+}
 # }}}
+# }}}
+
 # Main loop {{{
 
 while (my $filename = shift)
