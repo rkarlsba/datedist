@@ -343,3 +343,5 @@ while (my $filename = shift)
 }
 
 # }}}
+#
+# finito
