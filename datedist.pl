@@ -166,8 +166,8 @@ GetOptions(
 ) or syntax("Illegal option!");
 
 $no_day_dir = 1 if ($no_month_dir);
-$hour_dir = 1 if ($minute_dir);
 $minute_dir = 1 if ($second_dir);
+$hour_dir = 1 if ($minute_dir);
 &help("Incompatible options!") if ($no_day_dir and $hour_dir);
 &help if ($help);
 &version if ($print_version);
