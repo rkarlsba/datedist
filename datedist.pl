@@ -152,6 +152,7 @@ GetOptions(
 	"norun" => \$norun,
 	"exif" => \$exif,
 	"noexif" => \$noexif,
+	"no-exif" => \$noexif,
 	"mcf=s" => \$mcf,
 	"move-corresponding-xmp" => \$move_corresponding_xmp,
 	"move-corresponding-jpg" => \$move_corresponding_jpg,
