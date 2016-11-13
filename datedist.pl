@@ -67,6 +67,7 @@ my $no_day_dir = 0;
 my $no_month_dir = 0;
 my $hour_dir = 0;
 my $minute_dir = 0;
+my $second_dir = 0;
 my $norun = 0;
 my $help = 0;
 my $verbose = 0;
@@ -101,6 +102,7 @@ Syntax: $0 [ opts ] filename [ filename [ ... ] ]
                             directory.
    --hour                   Create hourly dirs
    --minute                 Create minutely dirs (implies --hour)
+   --second                 Create secondly dirs (implies --minute)
    --nomonth                Do not create monthly dirs (implies --noday)
    --noday                  Do not create daily dirs
    --exif                   Distribute files by shoot time in exif data instead
@@ -115,7 +117,7 @@ Syntax: $0 [ opts ] filename [ filename [ ... ] ]
    --help                   Display this help
    --version                Show version number and exit
 
---nomonth/--noday are incompatible with --hour/--minute
+--nomonth/--noday are incompatible with --hour/--minute/--second
 EOT
 	exit (1);
 }
@@ -146,6 +148,7 @@ GetOptions(
 	"nomonth" => \$no_month_dir,
 	"hour" => \$hour_dir,
 	"minute" => \$minute_dir,
+	"second" => \$second_dir,
 	"norun" => \$norun,
 	"exif" => \$exif,
 	"noexif" => \$noexif,
@@ -163,6 +166,7 @@ GetOptions(
 
 $no_day_dir = 1 if ($no_month_dir);
 $hour_dir = 1 if ($minute_dir);
+$minute_dir = 1 if ($second_dir);
 &help("Incompatible options!") if ($no_day_dir and $hour_dir);
 &help if ($help);
 &version if ($print_version);
@@ -243,6 +247,7 @@ while (my $filename = shift)
 	$dir .= "/$day" unless ($no_day_dir);
 	$dir .= "/$hour" if ($hour_dir);
 	$dir .= "/$minute" if ($minute_dir);
+	$dir .= "/$second" if ($second_dir);
 	make_path($dir, {
 		verbose => $verbose,
 		mode => 0755,
