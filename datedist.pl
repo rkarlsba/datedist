@@ -148,6 +148,7 @@ GetOptions(
 	"minute" => \$minute_dir,
 	"norun" => \$norun,
 	"exif" => \$exif,
+	"noexif" => \$noexif,
 	"mcf=s" => \$mcf,
 	"move-corresponding-xmp" => \$move_corresponding_xmp,
 	"move-corresponding-jpg" => \$move_corresponding_jpg,
@@ -165,6 +166,7 @@ $hour_dir = 1 if ($minute_dir);
 &help("Incompatible options!") if ($no_day_dir and $hour_dir);
 &help if ($help);
 &version if ($print_version);
+$exif=0 if ($noexif);
 
 # Move corresponding files - new way {{{
 # mcf is "move corresponding files" the new way
