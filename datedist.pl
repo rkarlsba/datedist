@@ -42,22 +42,24 @@
 #  - Version changed to 0.9.9
 #  - More testing to be done
 #
+# 2018-01-18:
+#  - Removed dependencies on Time::Format and Image::ExifTool. The former is
+#    removed and the code juse uses localtime(). The latter is used if present.
+#    Also removed Dat::Dumper, since it wasn't in active use.
+#
 # License: AGPL v3.0. See http://www.gnu.org/licenses/agpl-3.0.html for details.
 #
 # Roy Sigurd Karlsbakk <roy@karlsbakk.net>
 #
 # }}}
 
-# Uses {{{
+# Uncondional uses {{{
 
 use strict;
 use warnings;
 use File::Copy;
 use File::Path qw(make_path);
 use Getopt::Long;
-use Image::ExifTool qw(:Public);
-use Time::Format qw(%strftime);
-use Data::Dumper;
 
 # }}}
 # Globals and settings {{{
@@ -71,7 +73,7 @@ my $second_dir = 0;
 my $norun = 0;
 my $help = 0;
 my $verbose = 0;
-my $exif = 1;
+my $exif = 0;
 my $noexif = 0;
 my $mcf = undef;
 my $move_corresponding_xmp = 0;
@@ -91,6 +93,11 @@ my $dest_dir = undef;
 my $version = '0.1.4';
 
 # }}}
+# Condional uses {{{
+
+my $have_image_exiftool = eval {require Image::ExifTool;1;};
+
+# }}}
 
 # sub help {{{
 
@@ -107,8 +114,8 @@ Syntax: $0 [ opts ] filename [ filename [ ... ] ]
    --noday                  Do not create daily dirs
    --exif                   Distribute files by shoot time in exif data instead
                             of file date. Will post a warning and ignore files
-                            without exif data. (default)
-   --noexif                 Negates exif (above).
+                            without exif data (needs Image::ExifTool).
+   --noexif                 Negates exif (default).
    --move-corresponding-xmp Moves corresponding xmp too
    --move-corresponding-jpg Moves corresponding jpg too
    --move-corresponding-tif Moves corresponding tif too
@@ -173,6 +180,11 @@ $hour_dir = 1 if ($minute_dir);
 &version if ($print_version);
 $exif=0 if ($noexif);
 
+if ($exif and not $have_image_exiftool) {
+	warn "Missing Image::ExifTool - disabling exif support";
+	$exif = 0;
+}
+
 # Move corresponding files - new way {{{
 # mcf is "move corresponding files" the new way
 if (defined($mcf)) {
@@ -229,12 +241,15 @@ while (my $filename = shift)
 		}
 	} else {
 		$mtime = (stat($filename))[9];
-		$year = $strftime{'%Y', $mtime};
-		$month = $strftime{'%m', $mtime};
-		$day = $strftime{'%d', $mtime};
-		$hour = $strftime{'%H', $mtime};
-		$minute = $strftime{'%M', $mtime};
-		$second = $strftime{'%S', $mtime};
+		($second,$minute,$hour,$day,$month,$year) = localtime($mtime);
+		$year += 1900;
+		$month = sprintf("%02d", $month+1);
+#		$year = $strftime{'%Y', $mtime};
+#		$month = $strftime{'%m', $mtime};
+#		$day = $strftime{'%d', $mtime};
+#		$hour = $strftime{'%H', $mtime};
+#		$minute = $strftime{'%M', $mtime};
+#		$second = $strftime{'%S', $mtime};
 	}
 
 # Create directory tree
