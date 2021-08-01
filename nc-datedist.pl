@@ -25,12 +25,11 @@
 
 use strict;
 use warnings;
+use File::Compare;
 
-my $dirname = '.';
 my ($y,$m,$d,$serial);
 
-opendir ( CWD, $dirname ) || die "Error in opening dir $dirname\n";
-while (( my $fn = readdir(CWD))) {
+while (my $fn = shift) {
     next if (-d $fn);
     unless (-f $fn) {
         print STDERR "'$fn' isn't a file\n";
@@ -46,6 +45,14 @@ while (( my $fn = readdir(CWD))) {
         print STDERR "Can't recognize filename '$fn'\n";
         next;
     }
-    print("$filename\n");
+    my $nn = "$m/$fn";
+    if ( -f $nn ) {
+        if (compare($fn,$nn) == 0) {
+            print STDERR "$fn og $nn er like, sletter $fn\n";
+            unlink($fn);
+            next;
+        }
+    }
+    print("Flytter $fn til $nn\n");
+    rename $fn,$nn;
 }
-closedir(CWD);
