@@ -244,12 +244,10 @@ while (my $filename = shift)
 		($second,$minute,$hour,$day,$month,$year) = localtime($mtime);
 		$year += 1900;
 		$month = sprintf("%02d", $month+1);
-#		$year = $strftime{'%Y', $mtime};
-#		$month = $strftime{'%m', $mtime};
-#		$day = $strftime{'%d', $mtime};
-#		$hour = $strftime{'%H', $mtime};
-#		$minute = $strftime{'%M', $mtime};
-#		$second = $strftime{'%S', $mtime};
+		$day = sprintf("%02d", $day);
+		$hour = sprintf("%02d", $hour);
+		$minute = sprintf("%02d", $minute);
+		$second = sprintf("%02d", $second);
 	}
 
 # Create directory tree
