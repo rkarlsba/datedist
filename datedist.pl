@@ -154,7 +154,11 @@ EOT
 
 sub syntax
 {
-    print "wtf?\n"
+    my $s = shift;
+    $s = 'wtf' unless (defined($s));
+    chomp($s);
+    print "$s\n";
+    &help;
 }
 # }}}
 # sub version {{{
@@ -199,8 +203,11 @@ GetOptions(
     "noday" => \$no_day_dir,
     "nomonth" => \$no_month_dir,
     "hour" => \$hour_dir,
+    "hours" => \$hour_dir,
     "minute" => \$minute_dir,
+    "minutes" => \$minute_dir,
     "second" => \$second_dir,
+    "seconds" => \$second_dir,
     "norun" => \$norun,
     "exif" => \$exif,
     "noexif" => \$noexif,
